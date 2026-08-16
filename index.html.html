@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hano coffee | 卸専用サイト</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0e0e0c; --surface:#161612; --border:rgba(255,255,255,0.07);
+    --gold:#c9a96e; --gold-dim:rgba(201,169,110,0.4);
+    --text:#e8e4db; --text-dim:rgba(232,228,219,0.5); --text-muted:rgba(232,228,219,0.3);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#0e0e0c !important;color:#e8e4db !important;font-family:'Noto Serif JP',serif;min-height:100vh;}
+
+  /* GATE */
+  #gate{position:fixed;inset:0;background:#0e0e0c !important;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;transition:opacity 0.8s,visibility 0.8s;}
+  #gate.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+  .gate-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,5vw,44px);font-weight:300;letter-spacing:0.25em;margin-bottom:6px;}
+  .gate-sub{font-size:9px;letter-spacing:0.4em;color:var(--text-muted);text-transform:uppercase;margin-bottom:52px;}
+  .gate-label{font-size:9px;letter-spacing:0.35em;color:var(--text-muted);text-transform:uppercase;margin-bottom:14px;}
+  #pw-input{width:min(300px,80vw);background:transparent;border:none;border-bottom:1px solid var(--border);padding:12px 0;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:0.15em;outline:none;text-align:center;transition:border-color 0.3s;display:block;}
+  #pw-input:focus{border-color:var(--gold-dim);}
+  #pw-input::placeholder{color:var(--text-muted);font-size:12px;}
+  .gate-btn{margin-top:28px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.35em;padding:13px 40px;cursor:pointer;transition:all 0.3s;text-transform:uppercase;}
+  .gate-btn:hover{background:var(--gold-dim);color:var(--text);}
+  .gate-error{margin-top:14px;font-size:10px;letter-spacing:0.2em;color:#c97070;opacity:0;transition:opacity 0.3s;}
+  .gate-error.show{opacity:1;}
+
+  /* MAIN */
+  #main{display:none;}
+  #main.visible{display:block;}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* HEADER */
+  header{position:sticky;top:0;background:rgba(14,14,12,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;z-index:100;}
+  .header-logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;letter-spacing:0.2em;cursor:pointer;}
+  .header-client{font-size:9px;letter-spacing:0.2em;color:var(--gold);border:1px solid var(--gold-dim);padding:5px 12px;}
+
+  /* HERO */
+  .hero{padding:100px 40px 80px;text-align:center;}
+  .hero-eyebrow{font-size:9px;letter-spacing:0.45em;color:var(--gold);text-transform:uppercase;margin-bottom:28px;display:block;}
+  .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5.5vw,58px);font-weight:300;line-height:1.35;color:var(--text);margin-bottom:24px;display:block;text-align:center;width:100%;}
+  .hero-title em{font-style:italic;color:var(--gold);}
+  .hero-desc{font-size:12px;line-height:2.1;color:var(--text-dim);letter-spacing:0.05em;max-width:520px;margin:0 auto 44px;}
+  .hero-meta{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;}
+  .hero-meta-item{text-align:center;}
+  .hero-meta-label{font-size:8px;letter-spacing:0.35em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:5px;}
+  .hero-meta-value{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);}
+
+  .divider{max-width:900px;margin:0 auto;padding:0 40px;border-top:1px solid var(--border);}
+  section{max-width:900px;margin:0 auto;padding:60px 40px;}
+  .section-label{font-size:9px;letter-spacing:0.45em;color:var(--gold);text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:16px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* PRICE CARDS */
+  .price-cards{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);}
+  .price-card{background:#0e0e0c;padding:20px;cursor:pointer;transition:background 0.2s;}
+  .price-card:hover,.price-card:active{background:var(--surface);}
+  .price-card:hover .product-name{color:var(--gold);}
+  .price-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .product-name{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--text);transition:color 0.2s;line-height:1.3;flex:1;}
+  .badge{display:inline-block;font-size:7px;letter-spacing:0.2em;color:var(--gold);border:1px solid var(--gold-dim);padding:2px 6px;margin-left:6px;vertical-align:middle;text-transform:uppercase;}
+  .price-card-arrow{font-size:18px;color:var(--text-muted);flex-shrink:0;margin-top:2px;}
+  .price-card-bottom{display:flex;align-items:center;border-top:1px solid var(--border);padding-top:14px;}
+  .price-cell{flex:1;}
+  .price-cell-label{font-size:8px;letter-spacing:0.3em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;}
+  .price-cell-value{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);display:block;}
+  .price-cell-note{font-size:9px;color:var(--text-muted);margin-top:2px;display:block;}
+  .product-roast{font-size:9px;letter-spacing:0.25em;color:var(--text-muted);text-transform:uppercase;}
+
+  /* NOTES */
+  .price-notes{margin-top:20px;display:flex;flex-direction:column;gap:6px;}
+  .price-note{font-size:10px;color:var(--text-muted);letter-spacing:0.03em;line-height:1.7;}
+
+  /* RULES */
+  .rules-list{list-style:none;border:1px solid var(--border);}
+  .rules-list li{display:flex;align-items:baseline;gap:20px;padding:20px 28px;border-bottom:1px solid var(--border);transition:background 0.2s;}
+  .rules-list li:last-child{border-bottom:none;}
+  .rules-list li:hover{background:var(--surface);}
+  .rule-num{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);opacity:0.6;min-width:20px;flex-shrink:0;}
+  .rule-text{font-size:12px;line-height:1.85;color:var(--text-dim);letter-spacing:0.03em;}
+
+  /* ORDER */
+  .order-section{text-align:center;padding:80px 40px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .order-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,4.5vw,40px);font-weight:300;color:var(--text);margin-bottom:14px;line-height:1.3;}
+  .order-subtitle{font-size:11px;color:var(--text-dim);letter-spacing:0.08em;line-height:2.1;margin-bottom:44px;}
+  .order-buttons{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
+  .btn-primary{display:inline-block;background:var(--gold);color:#0e0e0c;font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:0.3em;padding:17px 44px;text-decoration:none;text-transform:uppercase;transition:opacity 0.3s;}
+  .btn-primary:hover{opacity:0.85;}
+  .btn-secondary{display:inline-block;background:transparent;color:var(--text-dim);font-size:11px;letter-spacing:0.25em;padding:17px 28px;text-decoration:none;border:1px solid var(--border);text-transform:uppercase;transition:border-color 0.3s,color 0.3s;}
+  .btn-secondary:hover{border-color:var(--gold-dim);color:var(--text);}
+
+  footer{padding:44px 40px;max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+  .footer-logo{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);}
+  .footer-contact{font-size:10px;color:var(--text-muted);letter-spacing:0.08em;}
+  .footer-contact a{color:var(--text-muted);text-decoration:none;}
+  .footer-contact a:hover{color:var(--gold);}
+
+  /* DETAIL PAGE */
+  .detail-wrap{max-width:760px;margin:0 auto;padding:60px 40px 80px;}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:0.3em;color:var(--text-muted);text-transform:uppercase;cursor:pointer;transition:color 0.2s;margin-bottom:56px;background:none;border:none;}
+  .back-btn:hover{color:var(--gold);}
+  .back-btn::before{content:'←';font-size:12px;}
+  .detail-eyebrow{font-size:9px;letter-spacing:0.45em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:block;}
+  .detail-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,6vw,56px);font-weight:300;line-height:1.15;color:var(--text);margin-bottom:20px;}
+  .detail-tagline{font-size:13px;color:var(--text-dim);letter-spacing:0.06em;line-height:1.9;margin-bottom:36px;font-style:italic;}
+  .flavor-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px;}
+  .flavor-tag{font-size:11px;letter-spacing:0.15em;color:var(--text-dim);border:1px solid var(--border);padding:6px 16px;}
+  .taste-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);margin-bottom:40px;}
+  .taste-bar-item{padding:20px 24px;border-right:1px solid var(--border);}
+  .taste-bar-item:last-child{border-right:none;}
+  .taste-label{font-size:9px;letter-spacing:0.3em;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;display:block;}
+  .taste-dots{display:flex;gap:4px;}
+  .dot{width:10px;height:10px;background:var(--border);}
+  .dot.on{background:var(--gold);}
+  .bean-info{border:1px solid var(--border);margin-bottom:40px;}
+  .bean-info-header{padding:16px 24px;border-bottom:1px solid var(--border);font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;}
+  .bean-info-row{display:flex;padding:14px 24px;border-bottom:1px solid var(--border);}
+  .bean-info-row:last-child{border-bottom:none;}
+  .bean-info-key{font-size:10px;letter-spacing:0.2em;color:var(--text-muted);min-width:90px;flex-shrink:0;}
+  .bean-info-val{font-size:12px;color:var(--text-dim);letter-spacing:0.03em;line-height:1.7;}
+  .detail-price-box{border:1px solid var(--border);padding:24px 28px;margin-bottom:40px;background:var(--surface);}
+  .detail-price-label{font-size:9px;letter-spacing:0.3em;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;display:block;}
+  .detail-price-value{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold);}
+
+  @media(max-width:600px){
+    header,footer{padding:14px 20px;}
+    .hero{padding:60px 20px;}
+    section,.order-section{padding:44px 20px;}
+    footer{flex-direction:column;}
+    .rules-list li{padding:16px 20px;gap:14px;}
+    .detail-wrap{padding:40px 20px 60px;}
+    .taste-bars{grid-template-columns:1fr;}
+    .taste-bar-item{border-right:none;border-bottom:1px solid var(--border);}
+    .taste-bar-item:last-child{border-bottom:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-logo">hano coffee</div>
+  <div class="gate-sub">Wholesale Portal</div>
+  <div class="gate-label">パスワードを入力してください</div>
+  <input type="password" id="pw-input" placeholder="password" autocomplete="off">
+  <button class="gate-btn" onclick="checkPassword()">Enter</button>
+  <div class="gate-error" id="pw-error">パスワードが違います</div>
+</div>
+
+<div id="main">
+  <header>
+    <div class="header-logo" onclick="showPage('home')">hano coffee</div>
+    <div class="header-client" id="client-badge">Wholesale</div>
+  </header>
+
+  <div id="page-home" class="page active">
+    <div class="hero">
+      <span class="hero-eyebrow">Wholesale Partner Portal</span>
+      <h1 class="hero-title">hano coffeeの豆を、<br><em>あなたのお店へ。</em></h1>
+      <p class="hero-desc">
+        東松戸・Lattice 1Fより自家焙煎するスペシャルティコーヒーを、<br>
+        卸価格でお届けしています。<br>
+        最小ロット500g〜、月次注文も対応可能です。
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">掛け率</span>
+          <span class="hero-meta-value" id="meta-rate">—</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">最小ロット</span>
+          <span class="hero-meta-value">500g〜</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <section>
+      <div class="section-label" id="price-list-label">Price List</div>
+      <div class="price-cards" id="price-cards"></div>
+      <div class="price-notes">
+        <div class="price-note">※ 価格は500gあたりの税込卸価格です。</div>
+        <div class="price-note">※ 在庫状況や生豆価格の変動により、ラインナップ・価格を変更する場合があります。</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <div class="section-label">ご利用にあたって</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">01</span><span class="rule-text">ご注文は500g〜お願いしています。</span></li>
+        <li><span class="rule-num">02</span><span class="rule-text">豆はhano coffeeで通常展開しているラインナップからのご提供となります。</span></li>
+        <li><span class="rule-num">03</span><span class="rule-text">ご注文は使用予定日の1週間前までにお願いいたします。</span></li>
+        <li><span class="rule-num">04</span><span class="rule-text">配送の場合、送料はご負担をお願いしています。</span></li>
+        <li><span class="rule-num">05</span><span class="rule-text">豆の品質の観点から、焙煎日より3ヶ月以内での使い切りをお願いしています。</span></li>
+        <li><span class="rule-num">06</span><span class="rule-text">店内で豆販売を行う場合は、事前にご相談ください。</span></li>
+      </ul>
+    </section>
+
+    <div class="order-section">
+      <div class="section-label" style="justify-content:center;max-width:400px;margin:0 auto 36px;">Order</div>
+      <h2 class="order-title">ご注文・お問い合わせ</h2>
+      <p class="order-subtitle">下記フォームよりご注文・ご相談を承っております。<br>お気軽にどうぞ。</p>
+      <div class="order-buttons">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdQ6M4d3EhL6EbpIbR0693_JPXwl6Yr2sG1mU9JJ3VHH-dmpw/viewform?usp=publish-editor" target="_blank" class="btn-primary">注文フォームへ</a>
+        <a href="mailto:hano.coffee.official@gmail.com" class="btn-secondary">メールで問い合わせ</a>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-logo">hano coffee</div>
+      <div class="footer-contact">東松戸 Lattice 1F ｜ <a href="mailto:hano.coffee.official@gmail.com">hano.coffee.official@gmail.com</a></div>
+    </footer>
+  </div>
+
+  <div id="page-detail" class="page">
+    <div class="detail-wrap">
+      <button class="back-btn" onclick="showPage('home')">一覧に戻る</button>
+      <span class="detail-eyebrow" id="d-eyebrow"></span>
+      <h1 class="detail-title" id="d-title"></h1>
+      <p class="detail-tagline" id="d-tagline"></p>
+      <div class="flavor-tags" id="d-flavors"></div>
+      <div class="taste-bars">
+        <div class="taste-bar-item"><span class="taste-label">酸味</span><div class="taste-dots" id="d-acid"></div></div>
+        <div class="taste-bar-item"><span class="taste-label">甘味</span><div class="taste-dots" id="d-sweet"></div></div>
+        <div class="taste-bar-item"><span class="taste-label">苦味</span><div class="taste-dots" id="d-bitter"></div></div>
+      </div>
+      <div class="bean-info">
+        <div class="bean-info-header">Bean Info</div>
+        <div id="d-beaninfo"></div>
+      </div>
+      <div class="detail-price-box">
+        <span class="detail-price-label">卸価格 500g</span>
+        <div class="detail-price-value" id="d-price"></div>
+      </div>
+      <div class="order-buttons" style="justify-content:flex-start;">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdQ6M4d3EhL6EbpIbR0693_JPXwl6Yr2sG1mU9JJ3VHH-dmpw/viewform?usp=publish-editor" target="_blank" class="btn-primary">この豆を注文する</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CLIENTS = [
+  { name: 'Sara / 長谷部美樹 様', rate: 0.60, pw: '847293' },
+  { name: '無 muu cafe bar & shisha', rate: 0.65, pw: '361058' },
+  { name: 'shooko bakery', rate: 0.65, pw: '529174' },
+];
+
+const PRODUCTS = [
+  {
+    id:1, nameEn:'Colombia El Paraiso\nLychee Peach', eyebrow:'Special',
+    tagline:'桃の果汁そのままに。コーヒーの概念を覆す一杯。',
+    flavors:['Lychee','Peach','Oolong'], acid:4, sweet:4, bitter:1,
+    retail:2250, special:true, roast:'浅煎り',
+    info:[['生産国','Colombia'],['生産地','Cauca'],['農園／生産者','El Paraiso農園 / Bermudez Family'],['品種','Castillo'],['精製方法','Double Anaerobic / Thermal Shock Washed']],
+  },
+  {
+    id:3, nameEn:'Colombia Chiroso\nWashed', eyebrow:'Single Origin',
+    tagline:'フローラルで透き通る、ナリーニョの宝石。',
+    flavors:['Floral','Apricot','Grapefruit'], acid:4, sweet:3, bitter:1,
+    retail:1850, special:false, roast:'浅煎り',
+    info:[['生産国','Colombia'],['生産地','San Pedro de Cartago · Nariño'],['農園／生産者','Los Guayacanes農園 / Everio Audias Lasso'],['品種','Chiroso'],['精製方法','Washed']],
+  },
+  {
+    id:4, nameEn:'Brazil Guariroba\nFruity', eyebrow:'Single Origin',
+    tagline:'シトラスと山椒のきらめき。ブラジルの新しい顔。',
+    flavors:['Citrus','Sansho','Tropical'], acid:4, sweet:3, bitter:1,
+    retail:1800, special:false, roast:'浅煎り',
+    info:[['生産国','Brazil'],['生産地','Minas Gerais · Campo das Vertentes'],['農園','Guariroba農園'],['品種','Red Catuai'],['精製方法','Volcano Process / Slow Shade Dry']],
+  },
+  {
+    id:5, nameEn:'Honduras Pacamara\nNatural', eyebrow:'Single Origin',
+    tagline:'チェリーとチョコレートが重なる、大粒の恵み。',
+    flavors:['Cherry','Tropical','Chocolate'], acid:3, sweet:4, bitter:2,
+    retail:1450, special:false, roast:'浅煎り',
+    info:[['生産国','Honduras'],['生産地','Selguapa · Comayagua'],['農園／生産者','Field Blend / Jesus Gareas'],['品種','Pacamara'],['精製方法','Natural']],
+  },
+  {
+    id:6, nameEn:'Burundi Ephrem\nWashed', eyebrow:'Single Origin',
+    tagline:'透明感という名の味わい。情熱と誠実さの結晶。',
+    flavors:['Cassis','Tea-like','Amber Sugar'], acid:3, sweet:3, bitter:1,
+    retail:1400, special:false, roast:'浅煎り',
+    info:[['生産国','Burundi'],['生産者','Ephrem'],['品種','Bourbon Mibirizi'],['精製方法','Washed']],
+  },
+  {
+    id:7, nameEn:'Kenya Guama\nWashed', eyebrow:'Single Origin',
+    tagline:'カシスとオレンジが弾ける、ケニアの躍動。',
+    flavors:['Cassis','Orange','Juicy'], acid:4, sweet:3, bitter:1,
+    retail:1350, special:false, roast:'浅煎り',
+    info:[['生産国','Kenya'],['精製所','Guama'],['品種','SL28 / SL34 / Ruiru 11'],['精製方法','Washed']],
+  },
+  {
+    id:8, nameEn:'Blend "en"', eyebrow:'Blend',
+    tagline:'コーヒーの甘みと華やかさを。',
+    flavors:['Mixed Berry','Candy','Floral'], acid:3, sweet:3, bitter:1,
+    retail:1200, special:false, roast:'中煎り',
+    info:[['構成','Ethiopia Natural / Ethiopia Anaerobic Natural'],['精製方法','—']],
+  },
+  {
+    id:9, nameEn:'Blend "rei"\n(half-caf)', eyebrow:'Half Caf Blend',
+    tagline:'カフェインを半分に、味わいはそのままに。',
+    flavors:['Raisin','Cacao'], acid:1, sweet:3, bitter:4,
+    retail:1200, special:false, roast:'中深煎り',
+    info:[['構成','Decaf Ethiopia / Guatemala / Indonesia'],['特徴','カフェインを約半分に抑えたブレンド']],
+  },
+  {
+    id:10, nameEn:'Decaf Ethiopia\nNatural', eyebrow:'Decaf',
+    tagline:'夜でも、おいしいコーヒーを。',
+    flavors:['Caramel','Rum Raisin','Roasty'], acid:2, sweet:3, bitter:4,
+    retail:1200, special:false, roast:'深煎り',
+    info:[['生産国','Ethiopia'],['生産地','Guji Zone · Hambela Wamena · Dari Kidame Village周辺'],['精製所','Dari Washing Station'],['品種','Dega / Walisho'],['精製方法','Natural · MW Process 99.9% Decaf']],
+  },
+  {
+    id:11, nameEn:'Indonesia Red Moon\nMandheling', eyebrow:'Single Origin',
+    tagline:'深く、力強く。ハーバルな余韻とともに。',
+    flavors:['Full Body','Bittersweet','Herbal'], acid:2, sweet:2, bitter:4,
+    retail:1100, special:false, roast:'深煎り',
+    info:[['生産国','Indonesia'],['生産地','North Sumatra · Aceh · Bener Meriah · Bandar District'],['生産者','KSU Cooperative Tirmijaya'],['品種','Bourbon / Typica'],['精製方法','Wet Hull (Giling Basah)']],
+  },
+  {
+    id:12, nameEn:'hano coffee\nstandard', eyebrow:'Blend',
+    tagline:'迷ったら、またこれを。',
+    flavors:['Chocolate','Almond','Brown Sugar'], acid:2, sweet:3, bitter:3,
+    retail:1400, special:false, roast:'中深煎り',
+    info:[['構成','Guatemala / Brazil'],['販売単位','150g / 300g']],
+    isStandard:true,
+  },
+];
+
+// 価格計算
+function calcPrice(p, rate) {
+  if (p.isStandard) {
+    // 1,400 ÷ 150 × 500 × rate → 四捨五入して10円単位
+    return Math.round((1400 / 150 * 500 * rate) / 10) * 10;
+  }
+  return Math.round(p.retail * 5 * rate / 10) * 10;
+}
+
+let currentRate = 0.65;
+
+// 日付自動表示
+function updateDateLabel() {
+  const now = new Date();
+  const label = now.getFullYear() + '.' + String(now.getMonth() + 1).padStart(2, '0');
+  document.getElementById('price-list-label').textContent = 'Price List — ' + label;
+}
+
+function buildCards(rate) {
+  const container = document.getElementById('price-cards');
+  container.innerHTML = PRODUCTS.map(p => {
+    const w500 = calcPrice(p, rate);
+    const badge = p.special ? '<span class="badge">Special</span>' : '';
+    const note = p.isStandard ? '<span class="price-cell-note">※ 100g換算 500g分</span>' : '';
+    return `<div class="price-card" onclick="showDetail(${p.id})">
+      <div class="price-card-top">
+        <div>
+          <div class="product-name">${p.nameEn.replace('\n',' ')}${badge}</div>
+          <span class="product-roast">${p.roast}</span>
+        </div>
+        <div class="price-card-arrow">›</div>
+      </div>
+      <div class="price-card-bottom">
+        <div class="price-cell">
+          <span class="price-cell-label">500g 卸価格</span>
+          <span class="price-cell-value">¥${w500.toLocaleString()}</span>
+          ${note}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showDetail(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('d-eyebrow').textContent = p.eyebrow;
+  document.getElementById('d-title').innerHTML = p.nameEn.replace('\n','<br>');
+  document.getElementById('d-tagline').textContent = p.tagline;
+  document.getElementById('d-flavors').innerHTML = p.flavors.map(f => `<span class="flavor-tag">${f}</span>`).join('');
+  ['acid','sweet','bitter'].forEach((k,i) => {
+    document.getElementById(['d-acid','d-sweet','d-bitter'][i]).innerHTML =
+      Array.from({length:5},(_,j) => `<div class="dot ${j < p[k] ? 'on':''}"></div>`).join('');
+  });
+  document.getElementById('d-beaninfo').innerHTML = p.info.map(([k,v]) =>
+    `<div class="bean-info-row"><span class="bean-info-key">${k}</span><span class="bean-info-val">${v}</span></div>`
+  ).join('');
+  document.getElementById('d-price').textContent = '¥' + calcPrice(p, currentRate).toLocaleString();
+  showPage('detail');
+  window.scrollTo(0,0);
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value.trim();
+  const err = document.getElementById('pw-error');
+  const client = CLIENTS.find(c => c.pw === val);
+  if (client) {
+    currentRate = client.rate;
+    document.getElementById('client-badge').textContent = client.name;
+    const r = client.rate * 10;
+    document.getElementById('meta-rate').textContent = (Number.isInteger(r) ? r : r.toFixed(1)) + '掛け';
+    buildCards(client.rate);
+    updateDateLabel();
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('main').classList.add('visible');
+  } else {
+    err.classList.add('show');
+    document.getElementById('pw-input').value = '';
+    setTimeout(() => err.classList.remove('show'), 2000);
+  }
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+</script>
+</body>
+</html>
