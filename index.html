@@ -163,7 +163,8 @@
       <p class="hero-desc">
         東松戸・Lattice 1Fより自家焙煎するスペシャルティコーヒーを、<br>
         卸価格でお届けしています。<br>
-        最小ロット500g〜、月次注文も対応可能です。
+        最小ロット500g〜、月次注文も対応可能です。<br>
+        <span style="font-size:11px;color:var(--text3);">※ hano coffee standardは1kg〜</span>
       </p>
       <div class="hero-meta">
         <div class="hero-meta-item">
@@ -193,7 +194,7 @@
     <section>
       <div class="section-label">ご利用にあたって</div>
       <ul class="rules-list">
-        <li><span class="rule-num">01</span><span class="rule-text">ご注文は500g〜お願いしています。</span></li>
+        <li><span class="rule-num">01</span><span class="rule-text">ご注文は500g〜お願いしています。（hano coffee standardは1kg〜）</span></li>
         <li><span class="rule-num">02</span><span class="rule-text">豆はhano coffeeで通常展開しているラインナップからのご提供となります。</span></li>
         <li><span class="rule-num">03</span><span class="rule-text">ご注文は使用予定日の1週間前までにお願いいたします。</span></li>
         <li><span class="rule-num">04</span><span class="rule-text">配送の場合、送料はご負担をお願いしています。</span></li>
@@ -250,6 +251,7 @@ const CLIENTS = [
   { name: 'Sara / 長谷部美樹 様', rate: 0.60, pw: '847293' },
   { name: '無 muu cafe bar & shisha', rate: 0.65, pw: '361058' },
   { name: 'shooko bakery', rate: 0.65, pw: '529174' },
+  { name: 'TEST', rate: 0.65, pw: '000000' },
 ];
 
 const PRODUCTS = [
@@ -336,8 +338,8 @@ const PRODUCTS = [
 // 価格計算
 function calcPrice(p, rate) {
   if (p.isStandard) {
-    // 1,400 ÷ 150 × 500 × rate → 四捨五入して10円単位
-    return Math.round((1400 / 150 * 500 * rate) / 10) * 10;
+    // 1,400 ÷ 150 × 1000 × rate → 四捨五入して10円単位（1kg）
+    return Math.round((1400 / 150 * 1000 * rate) / 10) * 10;
   }
   return Math.round(p.retail * 5 * rate / 10) * 10;
 }
@@ -356,7 +358,8 @@ function buildCards(rate) {
   container.innerHTML = PRODUCTS.map(p => {
     const w500 = calcPrice(p, rate);
     const badge = p.special ? '<span class="badge">Special</span>' : '';
-    const note = p.isStandard ? '<span class="price-cell-note">※ 100g換算 500g分</span>' : '';
+    const note = p.isStandard ? '<span class="price-cell-note">※ 1kgから / 100g換算</span>' : '';
+    const priceLabel = p.isStandard ? '1kg 卸価格' : '500g 卸価格';
     return `<div class="price-card" onclick="showDetail(${p.id})">
       <div class="price-card-top">
         <div>
@@ -367,7 +370,7 @@ function buildCards(rate) {
       </div>
       <div class="price-card-bottom">
         <div class="price-cell">
-          <span class="price-cell-label">500g 卸価格</span>
+          <span class="price-cell-label">${priceLabel}</span>
           <span class="price-cell-value">¥${w500.toLocaleString()}</span>
           ${note}
         </div>
@@ -391,6 +394,8 @@ function showDetail(id) {
     `<div class="bean-info-row"><span class="bean-info-key">${k}</span><span class="bean-info-val">${v}</span></div>`
   ).join('');
   document.getElementById('d-price').textContent = '¥' + calcPrice(p, currentRate).toLocaleString();
+  const priceLabel = p.isStandard ? '卸価格 1kg' : '卸価格 500g';
+  document.querySelector('.detail-price-label').textContent = priceLabel;
   showPage('detail');
   window.scrollTo(0,0);
 }
