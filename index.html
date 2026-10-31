@@ -259,7 +259,7 @@ const PRODUCTS = [
     id:1, nameEn:'Colombia El Paraiso\nLychee Peach', eyebrow:'Special',
     tagline:'桃の果汁そのままに。コーヒーの概念を覆す一杯。',
     flavors:['Lychee','Peach','Oolong'], acid:4, sweet:4, bitter:1,
-    retail:2250, special:true, roast:'浅煎り',
+    retail:2400, special:true, roast:'浅煎り',
     info:[['生産国','Colombia'],['生産地','Cauca'],['農園／生産者','El Paraiso農園 / Bermudez Family'],['品種','Castillo'],['精製方法','Double Anaerobic / Thermal Shock Washed']],
   },
   {
@@ -277,12 +277,13 @@ const PRODUCTS = [
     info:[['生産国','Brazil'],['生産地','Minas Gerais · Campo das Vertentes'],['農園','Guariroba農園'],['品種','Red Catuai'],['精製方法','Volcano Process / Slow Shade Dry']],
   },
   {
-    id:5, nameEn:'Honduras Pacamara\nNatural', eyebrow:'Single Origin',
-    tagline:'チェリーとチョコレートが重なる、大粒の恵み。',
-    flavors:['Cherry','Tropical','Chocolate'], acid:3, sweet:4, bitter:2,
-    retail:1450, special:false, roast:'浅煎り',
-    info:[['生産国','Honduras'],['生産地','Selguapa · Comayagua'],['農園／生産者','Field Blend / Jesus Gareas'],['品種','Pacamara'],['精製方法','Natural']],
+    id:5, nameEn:'Ethiopia Morke\nNatural', eyebrow:'Single Origin',
+    tagline:'ベリーとホワイトグレープ、光を含んだような一杯。',
+    flavors:['Berry','White Grape','White Peach','Bergamot'], acid:4, sweet:4, bitter:1,
+    retail:2000, special:true, roast:'浅煎り',
+    info:[['生産国','Ethiopia'],['生産地','Sidama · Bura · Morke'],['精製所','Morke Drying Station / Niguse Gemeda Muge'],['品種','74158'],['精製方法','Natural']],
   },
+  /* 非表示：Burundi Ephrem Washed（再入荷時に復活）
   {
     id:6, nameEn:'Burundi Ephrem\nWashed', eyebrow:'Single Origin',
     tagline:'透明感という名の味わい。情熱と誠実さの結晶。',
@@ -290,6 +291,7 @@ const PRODUCTS = [
     retail:1400, special:false, roast:'浅煎り',
     info:[['生産国','Burundi'],['生産者','Ephrem'],['品種','Bourbon Mibirizi'],['精製方法','Washed']],
   },
+  */
   {
     id:7, nameEn:'Kenya Guama\nWashed', eyebrow:'Single Origin',
     tagline:'カシスとオレンジが弾ける、ケニアの躍動。',
@@ -301,7 +303,7 @@ const PRODUCTS = [
     id:8, nameEn:'Blend "en"', eyebrow:'Blend',
     tagline:'コーヒーの甘みと華やかさを。',
     flavors:['Mixed Berry','Candy','Floral'], acid:3, sweet:3, bitter:1,
-    retail:1200, special:false, roast:'中煎り',
+    retail:1300, special:false, roast:'中煎り',
     info:[['構成','Ethiopia Natural / Ethiopia Anaerobic Natural'],['精製方法','—']],
   },
   {
@@ -315,15 +317,23 @@ const PRODUCTS = [
     id:10, nameEn:'Decaf Ethiopia\nNatural', eyebrow:'Decaf',
     tagline:'夜でも、おいしいコーヒーを。',
     flavors:['Caramel','Rum Raisin','Roasty'], acid:2, sweet:3, bitter:4,
-    retail:1200, special:false, roast:'深煎り',
+    retail:1300, special:false, roast:'深煎り',
     info:[['生産国','Ethiopia'],['生産地','Guji Zone · Hambela Wamena · Dari Kidame Village周辺'],['精製所','Dari Washing Station'],['品種','Dega / Walisho'],['精製方法','Natural · MW Process 99.9% Decaf']],
   },
   {
     id:11, nameEn:'Indonesia Red Moon\nMandheling', eyebrow:'Single Origin',
     tagline:'深く、力強く。ハーバルな余韻とともに。',
     flavors:['Full Body','Bittersweet','Herbal'], acid:2, sweet:2, bitter:4,
-    retail:1100, special:false, roast:'深煎り',
+    retail:1200, special:false, roast:'深煎り',
     info:[['生産国','Indonesia'],['生産地','North Sumatra · Aceh · Bener Meriah · Bandar District'],['生産者','KSU Cooperative Tirmijaya'],['品種','Bourbon / Typica'],['精製方法','Wet Hull (Giling Basah)']],
+  },
+  {
+    id:13, nameEn:'The Latte Blend', eyebrow:'Blend',
+    tagline:'ミルクに負けない、しっかりとしたコク。',
+    flavors:['Full Body','Bittersweet','With Milk'], acid:1, sweet:3, bitter:4,
+    retail:1400, special:false, roast:'深煎り',
+    info:[['生産国','Guatemala'],['構成','Guatemala Washed 50% / Guatemala Natural 50%'],['販売単位','150g / 300g']],
+    isStandard:true,
   },
   {
     id:12, nameEn:'hano coffee\nstandard', eyebrow:'Blend',
