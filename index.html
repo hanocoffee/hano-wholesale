@@ -350,12 +350,11 @@ const PRODUCTS = [
 function calcPrice(p, rate, isIshiguro) {
   if (isIshiguro) {
     if (p.isStandard) {
-      // isStandard: 150g定価1400円 → 1kg換算 = 1400/150*1000
-      // 袋代値引き: 1kg = 1000g → 1000/100 = 10袋相当 → 10 × 50 = 500円値引き
-      return Math.floor(1400 / 150 * 1000 - 500);
+      // isStandard: 150g定価1400円 → 100g換算 = 1400/150*100、袋代値引きなし
+      return Math.floor(1400 / 150 * 100);
     }
-    // 500g: 定価×5 - 袋代値引き(500g÷100×50=250円)
-    return Math.floor(p.retail * 5 - 250);
+    // 100g: 定価のみ（袋代値引きなし）
+    return p.retail;
   }
   if (p.isStandard) {
     // 1,400 ÷ 150 × 1000 × rate → 四捨五入して10円単位（1kg）
@@ -379,10 +378,16 @@ function buildCards(rate, isIshiguro) {
   // 石黒様の場合はWith Youブレンド（id:14相当）を除外、今は通常商品のみ表示
   const products = isIshiguro ? PRODUCTS.filter(p => !p.isWithYou) : PRODUCTS;
   container.innerHTML = products.map(p => {
-    const w500 = calcPrice(p, rate, isIshiguro);
+    const price = calcPrice(p, rate, isIshiguro);
     const badge = p.special ? '<span class="badge">Special</span>' : '';
-    const note = p.isStandard ? '<span class="price-cell-note">※ 1kgから / 100g換算</span>' : '';
-    const priceLabel = p.isStandard ? '1kg 卸価格' : '500g 卸価格';
+    let note, priceLabel;
+    if (isIshiguro) {
+      note = p.isStandard ? '<span class="price-cell-note">※ 100g換算</span>' : '';
+      priceLabel = '100g 卸価格';
+    } else {
+      note = p.isStandard ? '<span class="price-cell-note">※ 1kgから / 100g換算</span>' : '';
+      priceLabel = p.isStandard ? '1kg 卸価格' : '500g 卸価格';
+    }
     return `<div class="price-card" onclick="showDetail(${p.id})">
       <div class="price-card-top">
         <div>
@@ -394,7 +399,7 @@ function buildCards(rate, isIshiguro) {
       <div class="price-card-bottom">
         <div class="price-cell">
           <span class="price-cell-label">${priceLabel}</span>
-          <span class="price-cell-value">¥${w500.toLocaleString()}</span>
+          <span class="price-cell-value">¥${price.toLocaleString()}</span>
           ${note}
         </div>
       </div>
@@ -417,7 +422,12 @@ function showDetail(id) {
     `<div class="bean-info-row"><span class="bean-info-key">${k}</span><span class="bean-info-val">${v}</span></div>`
   ).join('');
   document.getElementById('d-price').textContent = '¥' + calcPrice(p, currentRate, currentIsIshiguro).toLocaleString();
-  const priceLabel = p.isStandard ? '卸価格 1kg' : '卸価格 500g';
+  let priceLabel;
+  if (currentIsIshiguro) {
+    priceLabel = '卸価格 100g';
+  } else {
+    priceLabel = p.isStandard ? '卸価格 1kg' : '卸価格 500g';
+  }
   document.querySelector('.detail-price-label').textContent = priceLabel;
   showPage('detail');
   window.scrollTo(0,0);
